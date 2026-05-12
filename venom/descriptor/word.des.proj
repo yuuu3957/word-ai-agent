@@ -1,0 +1,5 @@
+hostDes: host.json
+eleDes:
+  - new blank document.json
+  - textArea.json
+  - File.json

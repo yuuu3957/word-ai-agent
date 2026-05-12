@@ -1,0 +1,48 @@
+{
+  "target": {
+    "preciseSelector": [
+      {
+        "automationId": "",
+        "name": "MsoDockTop",
+        "className": "MsoCommandBarDock",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "MsoCommandBar",
+        "controlType": 50021
+      },
+      {
+        "automationId": "",
+        "name": "Ribbon",
+        "className": "MsoWorkPane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "NUIPane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "NetUIHWNDElement",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "Ribbon",
+        "className": "NetUInetpane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "FileTabButton",
+        "name": "[檔案] 索引標籤",
+        "className": "NetUIRibbonTab",
+        "controlType": 50000
+      }
+    ]
+  }
+}

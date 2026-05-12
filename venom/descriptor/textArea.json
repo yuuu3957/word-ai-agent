@@ -1,0 +1,30 @@
+{
+  "target": {
+    "preciseSelector": [
+      {
+        "automationId": "",
+        "name": "",
+        "className": "_WwF",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "文件1",
+        "className": "_WwB",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "文件1",
+        "className": "_WwG",
+        "controlType": 50030
+      },
+      {
+        "automationId": "UIA_AutomationId_Word_Page_1",
+        "name": "第 1 頁",
+        "className": "",
+        "controlType": 50025
+      }
+    ]
+  }
+}

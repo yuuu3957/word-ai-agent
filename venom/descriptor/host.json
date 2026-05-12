@@ -1,0 +1,12 @@
+{
+  "target": {
+    "preciseSelector": [
+      {
+        "automationId": "",
+        "name": "Word ",
+        "className": "OpusApp",
+        "controlType": 50032
+      }
+    ]
+  }
+}

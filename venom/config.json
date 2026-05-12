@@ -1,0 +1,9 @@
+{
+  "extension_server": {
+      "port": 5678
+  },
+  "backend_server": {
+      "port": 5216,
+      "hubName": "monitorHub"
+  }
+}
