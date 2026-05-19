@@ -63,16 +63,16 @@ def get_document_text() -> str:
     except Exception as e:
         return f"無法連接 Venom server：{str(e)}"
 
+
 @mcp.tool()
 def replace_selected_text(new_text: str) -> str:
-    """將 Word 中使用者選取的文字替換為新內容。使用前請先確認使用者已選取文字。"""
+    """將 Word 中使用者選取的文字替換為新內容。使用 Venom 快取的選取位置（Range）精準替換，不會誤改重複文字。使用前請確認使用者已在 Word 選取文字並將滑鼠移到 overlay 更新快取。"""
     try:
         response = requests.post(
-            "http://127.0.0.1:3002/word/replace-selected-text",
+            "http://127.0.0.1:3002/word/replace-at-range",
             json={"new_text": new_text},
             timeout=10
         )
-
         if response.status_code != 200:
             return f"替換失敗：{response.text}"
 
@@ -80,26 +80,11 @@ def replace_selected_text(new_text: str) -> str:
         if not data.get("success"):
             return f"替換失敗：{data.get('message', '未知錯誤')}"
 
-        return "替換成功。"
+        return data.get("message", "替換成功。")
 
     except Exception as e:
-        return f"無法連接 Venom server：{str(e)}"
+        return f"替換失敗：{str(e)}"
 
-@mcp.tool()
-def replace_text_com(old_text: str, new_text: str) -> str:
-    """使用 Windows COM 介面將 Word 文件中的指定文字替換為新內容。不需要使用者先選取文字。"""
-    try:
-        import win32com.client
-        word = win32com.client.GetActiveObject("Word.Application")
-        find = word.ActiveDocument.Content.Find
-        find.ClearFormatting()
-        result = find.Execute(old_text, False, True, False, False, False, True, 1, False, new_text, 2)
-        if result:
-            return f"替換成功：「{old_text}」→「{new_text}」"
-        else:
-            return f"找不到文字：「{old_text}」"
-    except Exception as e:
-        return f"COM 替換失敗：{str(e)}"
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")

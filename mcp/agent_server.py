@@ -16,9 +16,15 @@ BASE_DIR = Path(__file__).parent
 mcp_server = None
 agent = None
 
+cached_selection_start = -1
+cached_selection_end = -1
+
 
 class ChatRequest(BaseModel):
     prompt: str
+
+class ReplaceAtRangeRequest(BaseModel):
+    new_text: str
 
 
 @asynccontextmanager
@@ -81,6 +87,55 @@ async def chat(req: ChatRequest):
     return {
         "content": result.final_output
     }
+
+
+@app.post("/word/clear-selection-range")
+async def clear_selection_range():
+    global cached_selection_start, cached_selection_end
+    cached_selection_start = -1
+    cached_selection_end = -1
+    return {"success": True}
+
+
+@app.post("/word/cache-selection-range")
+async def cache_selection_range():
+    global cached_selection_start, cached_selection_end
+    try:
+        import win32com.client
+        word = win32com.client.GetActiveObject("Word.Application")
+        start = word.Selection.Start
+        end = word.Selection.End
+        if start == end:
+            return {"success": False, "message": "沒有選取文字（start == end）"}
+        cached_selection_start = start
+        cached_selection_end = end
+        return {"success": True, "start": start, "end": end}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+@app.post("/word/replace-at-range")
+async def replace_at_range(req: ReplaceAtRangeRequest):
+    global cached_selection_start, cached_selection_end
+    try:
+        new_text = req.new_text
+        if not new_text:
+            return {"success": False, "message": "缺少 new_text"}
+        if cached_selection_start < 0 or cached_selection_end <= cached_selection_start:
+            return {"success": False, "message": "沒有快取的選取範圍，請先選取文字"}
+        import win32com.client
+        word = win32com.client.GetActiveObject("Word.Application")
+        rng = word.ActiveDocument.Range(cached_selection_start, cached_selection_end)
+        old_text = rng.Text
+        
+        if old_text and old_text.endswith('\r') and not new_text.endswith('\r'):
+            new_text = new_text + '\r'
+        rng.Text = new_text
+        cached_selection_start = -1
+        cached_selection_end = -1
+        return {"success": True, "message": f"替換成功：「{old_text}」→「{new_text}」"}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
 
 @app.get("/health")

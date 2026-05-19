@@ -185,16 +185,41 @@ export function startBridge(mainWindow: BrowserWindow) {
     }
   });
 
-  app.post('/word/replace-selected-text', async (req, res) => {
+  app.post('/word/clear-cache', async (_req, res) => {
+    try {
+      await Promise.all([
+        callRendererTool(mainWindow, 'clear-selection-cache'),
+        fetch(`${AGENT_SERVER_URL}/word/clear-selection-range`, { method: 'POST' }),
+      ]);
+      return res.json({ success: true });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: String(error) });
+    }
+  });
+
+  app.post('/word/cache-selection-range', async (_req, res) => {
+    try {
+      const response = await fetch(`${AGENT_SERVER_URL}/word/cache-selection-range`, { method: 'POST' });
+      const data = await response.json();
+      return res.json(data);
+    } catch (error) {
+      return res.status(500).json({ success: false, message: String(error) });
+    }
+  });
+
+  app.post('/word/replace-at-range', async (req, res) => {
     try {
       const { new_text } = req.body;
-
       if (!new_text) {
         return res.status(400).json({ success: false, message: '缺少 new_text' });
       }
-
-      const result = await callRendererTool(mainWindow, 'replace-selected-text', { new_text });
-      return res.json(result);
+      const response = await fetch(`${AGENT_SERVER_URL}/word/replace-at-range`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ new_text }),
+      });
+      const data = await response.json();
+      return res.json(data);
     } catch (error) {
       return res.status(500).json({ success: false, message: String(error) });
     }

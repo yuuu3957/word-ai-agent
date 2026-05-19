@@ -1,5 +1,5 @@
 import { clickFileTab } from './clickFileTab';
-import { getSelectedText, refreshSelectedTextCache, getDocumentText, replaceSelectedText } from './wordTextTools';
+import { getSelectedText, refreshSelectedTextCache, getDocumentText, replaceSelectedText, clearSelectedTextCache } from './wordTextTools';
 
 export function registerVenomTools() {
   console.log('[registerVenomTools] register start');
@@ -31,9 +31,8 @@ export function registerVenomTools() {
         result = await getDocumentText();
       }
 
-      else if (toolName === 'replace-selected-text') {
-        const newText = payload?.new_text as string ?? '';
-        result = await replaceSelectedText(newText);
+      else if (toolName === 'clear-selection-cache') {
+        result = clearSelectedTextCache();
       }
 
       else {

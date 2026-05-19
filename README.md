@@ -129,7 +129,7 @@ word mcp venom/
 - [x] `open_file_menu` 工具
 - [x] `get_selected_text` 工具（含快取 + UI 選取預覽）
 - [x] `get_document_text` 工具
-- [ ] `replace_selected_text` 工具
+- [X] `replace_selected_text` 工具
 - [ ] `insert_text_at_cursor` 工具
 - [ ] `save_document` 工具
 - [ ] 格式調整工具群
@@ -166,6 +166,3 @@ word mcp venom/
 | 11 | `insert_cover_page` / `create_table_of_contents` | 報告生成 |
 | 12 | `export_pdf` | 輸出最終文件 |
 
-### 不實作（風險高或價值低）
-
-`open_document`、`create_blank_document`、`check_target_document`、`return_to_document`、`copy_selected_text` — 使用者自行操作即可，讓 AI 控制反而有誤操作風險。

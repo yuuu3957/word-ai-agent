@@ -132,48 +132,10 @@ export async function getSelectedText(): Promise<GetSelectedTextResult> {
   }
 }
 
-export async function replaceSelectedText(newText: string): Promise<{ success: boolean; message: string }> {
-  try {
-    if (!cachedSelectedText) {
-      return { success: false, message: '沒有快取的選取文字，請先選取文字' };
-    }
-
-    const host = await getSubscribedHost();
-    const subscribedElements = await host.getElementsByDescriptor(textAreaDescriptor);
-    const target =
-      subscribedElements?.item?.(0) ??
-      subscribedElements?.getHomElements?.()?.[0];
-
-    if (!target) {
-      return { success: false, message: '找不到 Word 文字區域' };
-    }
-
-    const fullText = await target.getDocumentText?.() ?? '';
-    const occurrences = fullText.split(cachedSelectedText).length - 1;
-
-    if (occurrences === 0) {
-      return { success: false, message: `找不到選取的文字：${cachedSelectedText}` };
-    }
-
-    if (occurrences > 1) {
-      return { success: false, message: `文件中有 ${occurrences} 處相同文字，請選取更獨特的片段` };
-    }
-
-    const newFullText = fullText.replace(cachedSelectedText, newText);
-    const setResult = await target.setValue?.(newFullText);
-    console.log('[replaceSelectedText] setValue result:', setResult);
-
-    // 驗證：替換後重新讀取，確認內容有更新
-    const verifyText = await target.getDocumentText?.() ?? '';
-    if (!verifyText.includes(newText)) {
-      return { success: false, message: 'setValue 未實際修改 Word 內容，此元素可能不支援寫入' };
-    }
-
-    cachedSelectedText = '';
-    return { success: true, message: '替換成功' };
-  } catch (error) {
-    return { success: false, message: String(error) };
-  }
+export function clearSelectedTextCache(): { success: boolean; message: string } {
+  cachedSelectedText = '';
+  cachedSelectedTextAt = 0;
+  return { success: true, message: '選取快取已清除' };
 }
 
 export async function getDocumentText(): Promise<getDocumentTextResult> {

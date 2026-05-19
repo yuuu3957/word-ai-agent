@@ -65,13 +65,16 @@ export const HelloWorld = () => {
 
   const refreshSelectedTextCache = async () => {
     try {
-      const res = await fetch('http://localhost:3002/word/refresh-selected-text-cache', {
-        method: 'POST',
-      });
-      const data = await res.json();
+      const [textRes, rangeRes] = await Promise.all([
+        fetch('http://localhost:3002/word/refresh-selected-text-cache', { method: 'POST' }),
+        fetch('http://localhost:3002/word/cache-selection-range', { method: 'POST' }),
+      ]);
+      const data = await textRes.json();
       if (data.selected_text) {
         setSelectedText(data.selected_text);
       }
+      const rangeData = await rangeRes.json();
+      console.log('[UI] cache-selection-range:', rangeData);
     } catch (error) {
       console.error('[UI] refresh selected text cache failed:', error);
     }
@@ -194,12 +197,34 @@ export const HelloWorld = () => {
                 borderRadius: 6,
                 padding: '4px 8px',
                 marginBottom: 6,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
               }}
             >
-              📌 選取：{selectedText.length > 40 ? `${selectedText.slice(0, 40)}…` : selectedText}
+              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                📌 選取：{selectedText.length > 40 ? `${selectedText.slice(0, 40)}…` : selectedText}
+              </span>
+              <button
+                type="button"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={async () => {
+                  setSelectedText('');
+                  await fetch('http://localhost:3002/word/clear-cache', { method: 'POST' });
+                }}
+                style={{
+                  flexShrink: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  color: '#aaa',
+                  fontSize: 14,
+                  lineHeight: 1,
+                  padding: '0 2px',
+                }}
+              >
+                ✕
+              </button>
             </div>
           )}
         <div
