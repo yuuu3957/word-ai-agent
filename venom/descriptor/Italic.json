@@ -38,9 +38,27 @@
         "controlType": 50033
       },
       {
-        "automationId": "FileTabButton",
-        "name": "[檔案] 索引標籤",
-        "className": "NetUIRibbonTab",
+        "automationId": "",
+        "name": "下層功能區",
+        "className": "NetUIPanViewer",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "常用",
+        "className": "NetUIOrderedGroup",
+        "controlType": 50026
+      },
+      {
+        "automationId": "",
+        "name": "字型",
+        "className": "NetUIChunk",
+        "controlType": 50026
+      },
+      {
+        "automationId": "Italic",
+        "name": "斜體",
+        "className": "NetUIRibbonButton",
         "controlType": 50000
       }
     ]

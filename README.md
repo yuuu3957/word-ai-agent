@@ -83,20 +83,66 @@ npm start
 
 ## MCP 工具列表
 
-目前實作狀態：
+> 讀取類使用 **Venom**（Accessibility API），寫入類使用 **Windows COM**（`win32com.client`）。
 
-| 工具 | 類別 | 狀態 |
-|------|------|------|
-| `open_file_menu` | 檔案管理 | ✅ 已實作 |
-| `get_selected_text` | 文件讀取 | ✅ 已實作 |
-| `get_document_text` | 文件讀取 | ✅ 已實作 |
-| `replace_selected_text` | 文字修改 | 🔲 待實作 |
-| `insert_text_at_cursor` | 文字修改 | 🔲 待實作 |
-| `save_document` | 檔案管理 | 🔲 待實作 |
-| `get_document_info` | 文件讀取 | 🔲 待實作 |
-| `get_document_structure` | 文件讀取 | 🔲 待實作 |
+### 已完成
 
-> 完整工具規劃詳見 Notion 文件。
+| 工具 | 類別 | 說明 | 技術 |
+|------|------|------|------|
+| `get_document_text` | 文件讀取 | 讀取整份文件內容 | Venom |
+| `get_selected_text` | 文件讀取 | 讀取使用者選取的文字（含快取） | Venom |
+| `get_word_count` | 文件讀取 | 讀取文件總字數（狀態列） | Venom |
+| `count_characters(text)` | 工具 | 計算任意文字的字數（中文字＋英文單字） | Python |
+| `replace_selected_text(new_text)` | 文字修改 | 以 COM Range 精準替換選取文字 | COM |
+| `insert_text_at_cursor(text)` | 文字修改 | 在快取游標位置插入文字 | COM |
+
+### 計畫新增
+
+> 需快取 Range 的工具：使用者須先在 Word 選取文字，再將滑鼠移到 Overlay（mouseDown 時同步快取 Venom 文字 + COM `Selection.Start/End`）。
+
+#### 文件讀取／分析
+
+| 工具 | 說明 | 技術 | 需快取 Range |
+|------|------|------|:---:|
+| `get_document_info` | 文件基本資訊（檔名、頁數、字數、段落數） | COM | ✗ |
+| `get_document_structure` | 分析段落與樣式，回傳標題、內文、章節層級 | COM | ✗ |
+| `get_current_styles` | 讀取選取範圍目前的字型、字級、行距、縮排 | COM | ✅ |
+
+#### 文字修改
+
+| 工具 | 說明 | 技術 | 需快取 Range |
+|------|------|------|:---:|
+| `insert_text_at_cursor(text)` | 在游標位置插入文字 | COM | ✗ |
+| `replace_text(old_text, new_text)` | 全文搜尋替換，不需先選取 | COM | ✗ |
+| `delete_selected_text` | 刪除選取文字 | COM | ✅ |
+| `insert_comment(comment)` | 在選取文字處插入 Word 註解 | COM | ✅ |
+| `highlight_text(color)` | 對選取文字套用螢光標記 | COM | ✅ |
+
+#### 格式處理
+
+| 工具 | 說明 | 技術 | 需快取 Range |
+|------|------|------|:---:|
+| `apply_heading_style(level)` | 套用標題樣式（Heading 1/2/3）到選取段落 | COM | ✅ |
+| `apply_body_style` | 套用內文樣式到選取範圍 | COM | ✅ |
+| `set_font(name, size, bold, italic, underline)` | 設定選取範圍的字型、字級與樣式 | COM | ✅ |
+| `set_paragraph_format(line_spacing, alignment, indent)` | 調整選取段落的行距、對齊與縮排 | COM | ✅ |
+| `apply_list_format(type)` | 將選取文字轉為項目符號或編號清單 | COM | ✅ |
+
+#### 報告生成
+
+| 工具 | 說明 | 技術 | 需快取 Range |
+|------|------|------|:---:|
+| `insert_cover_page(title, author, date)` | 根據資訊建立封面頁 | COM | ✗ |
+| `insert_page_number(position)` | 在頁首或頁尾加入頁碼 | COM | ✗ |
+| `create_table_of_contents` | 根據標題樣式在文件開頭插入目錄 | COM | ✗ |
+| `insert_report_template` | 建立摘要、前言、方法、結果、結論章節架構 | COM | ✗ |
+| `export_pdf` | 將文件輸出為 PDF | COM | ✗ |
+
+#### 輸出／報告
+
+| 工具 | 說明 | 技術 | 需快取 Range |
+|------|------|------|:---:|
+| `get_change_summary` | 回傳本次執行的修改項目與位置 | 系統 | ✗ |
 
 ## 專案結構
 
@@ -122,18 +168,36 @@ word mcp venom/
 ## 開發進度
 
 - [x] Electron overlay 介面
-- [x] React 聊天 UI
+- [x] React 聊天 UI（可拖曳、選取文字預覽 + ✕ 清除按鈕）
 - [x] Express Bridge 架構
 - [x] Python FastAPI Agent
 - [x] MCP Server 連線
 - [x] `open_file_menu` 工具
 - [x] `get_selected_text` 工具（含快取 + UI 選取預覽）
 - [x] `get_document_text` 工具
-- [X] `replace_selected_text` 工具
-- [ ] `insert_text_at_cursor` 工具
-- [ ] `save_document` 工具
-- [ ] 格式調整工具群
-- [ ] 報告生成工具群
+- [x] `replace_selected_text` 工具（COM Range 精準替換，保留換行）
+- [x] `get_word_count` 工具（Venom 讀狀態列）
+- [x] `insert_text_at_cursor` 工具（COM 快取游標位置插入）
+- [x] `count_characters(text)` 工具（純 Python 計算）
+- [ ] `get_document_info`
+- [ ] `get_document_structure`
+- [ ] `get_current_styles`
+- [ ] `insert_text_at_cursor`
+- [ ] `replace_text`
+- [ ] `delete_selected_text`
+- [ ] `insert_comment`
+- [ ] `highlight_text`
+- [ ] `apply_heading_style`
+- [ ] `apply_body_style`
+- [ ] `set_font`
+- [ ] `set_paragraph_format`
+- [ ] `apply_list_format`
+- [ ] `insert_cover_page`
+- [ ] `insert_page_number`
+- [ ] `create_table_of_contents`
+- [ ] `insert_report_template`
+- [ ] `export_pdf`
+- [ ] `get_change_summary`
 
 ## 實作路線圖
 

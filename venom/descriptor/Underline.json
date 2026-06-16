@@ -1,0 +1,72 @@
+{
+  "target": {
+    "preciseSelector": [
+      {
+        "automationId": "",
+        "name": "MsoDockTop",
+        "className": "MsoCommandBarDock",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "MsoCommandBar",
+        "controlType": 50021
+      },
+      {
+        "automationId": "",
+        "name": "Ribbon",
+        "className": "MsoWorkPane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "NUIPane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "NetUIHWNDElement",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "Ribbon",
+        "className": "NetUInetpane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "下層功能區",
+        "className": "NetUIPanViewer",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "常用",
+        "className": "NetUIOrderedGroup",
+        "controlType": 50026
+      },
+      {
+        "automationId": "",
+        "name": "字型",
+        "className": "NetUIChunk",
+        "controlType": 50026
+      },
+      {
+        "automationId": "UnderlineGallery",
+        "name": "底線",
+        "className": "NetUISplitButtonAnchor",
+        "controlType": 50031
+      },
+      {
+        "automationId": "",
+        "name": "底線",
+        "className": "NetUIRibbonButton",
+        "controlType": 50000
+      }
+    ]
+  }
+}

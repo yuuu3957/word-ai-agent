@@ -1,5 +1,4 @@
-import { clickFileTab } from './clickFileTab';
-import { getSelectedText, refreshSelectedTextCache, getDocumentText, replaceSelectedText, clearSelectedTextCache } from './wordTextTools';
+import { getSelectedText, refreshSelectedTextCache, getDocumentText, clearSelectedTextCache, getWordCount, toggleBold, applyVenomFormat, ApplyFormatPayload } from './wordTextTools';
 
 export function registerVenomTools() {
   console.log('[registerVenomTools] register start');
@@ -15,11 +14,7 @@ export function registerVenomTools() {
     try {
       let result;
 
-      if (toolName === 'open-file-menu') {
-        result = await clickFileTab();
-      }
-
-      else if (toolName === 'get-selected-text') {
+      if (toolName === 'get-selected-text') {
         result = await getSelectedText();
       }
 
@@ -33,6 +28,18 @@ export function registerVenomTools() {
 
       else if (toolName === 'clear-selection-cache') {
         result = clearSelectedTextCache();
+      }
+
+      else if (toolName === 'get-word-count') {
+        result = await getWordCount();
+      }
+
+      else if (toolName === 'toggle-bold') {
+        result = await toggleBold();
+      }
+
+      else if (toolName === 'apply-venom-format') {
+        result = await applyVenomFormat(payload as ApplyFormatPayload);
       }
 
       else {

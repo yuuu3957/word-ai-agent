@@ -1,0 +1,48 @@
+{
+  "target": {
+    "preciseSelector": [
+      {
+        "automationId": "",
+        "name": "MsoDockBottom",
+        "className": "MsoCommandBarDock",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "MsoCommandBar",
+        "controlType": 50021
+      },
+      {
+        "automationId": "",
+        "name": "狀態列",
+        "className": "MsoWorkPane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "NUIPane",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "",
+        "className": "NetUIHWNDElement",
+        "controlType": 50033
+      },
+      {
+        "automationId": "",
+        "name": "狀態列",
+        "className": "NetUInetpane",
+        "controlType": 50017
+      },
+      {
+        "automationId": "",
+        "name": "字數統計",
+        "className": "NetUISimpleButton",
+        "controlType": 50020
+      }
+    ]
+  }
+}

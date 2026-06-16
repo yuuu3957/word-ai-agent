@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import icon from '../../assets/icon.svg';
 import { HomContext } from './context/HomContext';
 import { ToolBar } from './components/toolbar/ToolBar';
-import InteractiveElement from './components/InteractiveElement';
+
 
 
 export const HelloWorld = () => {
@@ -36,8 +35,13 @@ export const HelloWorld = () => {
   ]);
   const [selectedText, setSelectedText] = useState('');
   const [pos, setPos] = useState({ right: 100, bottom: 20 });
+  const [size, setSize] = useState({ width: 320, height: 420 });
   const dragging = useRef(false);
+  const resizing = useRef(false);
+  const userCleared = useRef(false);
+  const lastRefreshedAt = useRef(0);
   const dragStart = useRef({ x: 0, y: 0, right: 100, bottom: 20 });
+  const resizeStart = useRef({ x: 0, y: 0, width: 320, height: 420 });
 
   const handleTitleMouseDown = (e: React.MouseEvent) => {
     dragging.current = true;
@@ -55,6 +59,32 @@ export const HelloWorld = () => {
 
     const onUp = () => {
       dragging.current = false;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+
+  const handleResizeMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    resizing.current = true;
+    resizeStart.current = { x: e.clientX, y: e.clientY, width: size.width, height: size.height };
+
+    const onMove = (ev: MouseEvent) => {
+      if (!resizing.current) return;
+      const dx = ev.clientX - resizeStart.current.x;
+      const dy = ev.clientY - resizeStart.current.y;
+      setSize({
+        width: Math.max(260, resizeStart.current.width - dx),
+        height: Math.max(300, resizeStart.current.height - dy),
+      });
+    };
+
+    const onUp = () => {
+      resizing.current = false;
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
     };
@@ -116,24 +146,27 @@ export const HelloWorld = () => {
     }
   };
 
-  const handleExternalLink = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    // eslint-disable-next-line no-console
-    console.log('Button clicked');
-    event.preventDefault();
-    const url = event.currentTarget.href;
-    window.myApi.myMethod.openExternalLink(url);
-  };
-
   return (
     <>
-      <InteractiveElement>
         <div
+        onMouseEnter={() => {
+          window.api.button.EnterButton();
+          const now = Date.now();
+          if (!userCleared.current && now - lastRefreshedAt.current > 2000) {
+            lastRefreshedAt.current = now;
+            refreshSelectedTextCache();
+          }
+        }}
+        onMouseLeave={() => {
+          userCleared.current = false;
+          if (!dragging.current && !resizing.current) window.api.button.OutButton();
+        }}
         style={{
           position: 'fixed',
           right: pos.right,
           bottom: pos.bottom,
-          width: 320,
-          height: 420,
+          width: size.width,
+          height: size.height,
           background: 'rgba(255,255,255,0.92)',
           backdropFilter: 'blur(10px)',
           borderRadius: 16,
@@ -146,6 +179,18 @@ export const HelloWorld = () => {
           pointerEvents: 'auto',
         }}
       >
+        <div
+          onMouseDown={handleResizeMouseDown}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 18,
+            height: 18,
+            cursor: 'nw-resize',
+            zIndex: 1,
+          }}
+        />
         <div
           onMouseDown={handleTitleMouseDown}
           style={{
@@ -209,6 +254,7 @@ export const HelloWorld = () => {
                 type="button"
                 onMouseDown={(e) => e.stopPropagation()}
                 onClick={async () => {
+                  userCleared.current = true;
                   setSelectedText('');
                   await fetch('http://localhost:3002/word/clear-cache', { method: 'POST' });
                 }}
@@ -228,12 +274,9 @@ export const HelloWorld = () => {
             </div>
           )}
         <div
-          onMouseDown={async (e) => {
+          onMouseDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
-
-            await refreshSelectedTextCache();
-
             inputRef.current?.focus();
           }}
           onClick={(e) => {
@@ -253,12 +296,9 @@ export const HelloWorld = () => {
             <input
               ref={inputRef}
               value={input}
-              onMouseDown={async (e) => {
+              onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-
-                await refreshSelectedTextCache();
-
                 inputRef.current?.focus();
               }}
               onClick={(e) => {
@@ -306,9 +346,7 @@ export const HelloWorld = () => {
           </div>
         </div>
       </div>
-    </InteractiveElement>
-
-      { <ToolBar>
+      <ToolBar>
         <ToolBar.ActionButton
           label="Start"
           onClick={async () => {
@@ -331,7 +369,7 @@ export const HelloWorld = () => {
             window.api.event.CloseWindow();
           }}
         />
-      </ToolBar> }
+      </ToolBar>
     </>
   );
 };
